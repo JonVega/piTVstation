@@ -100,15 +100,53 @@ WantedBy=multi-user.target
 6. Then back at the terminal, type `sudo chmod 644 /etc/systemd/system/piTVstation.service`
 7. Then type `sudo systemctl daemon-reload`
 8. Then `sudo systemctl enable piTVstation.service`
-9. Lastly, let's restart the Pi by typing `sudo shutdown -r now`
+9. We're almost done! next type `nano ~/piTVstation/scripts/piTVstation.sh` and hit Enter
+10. There are only two things you may want to change, once done with below, hit `Control + O` to save and `Control + X` to exit
+
+`AMOUNT_COMMERCIALS=0` - How many commercials should play before resuming playback
+`AUDIO_MODE="--stereo-mode=0"` - 0 for mono, 1 for stereo, 2 for reverse stereo
+
+10. Lastly, let's restart the Pi by typing `sudo shutdown -r now`
 
 ### What now?
 
+If you decided to opt-out of using commercials, then you're done! Yay! Just add videos to your Pi and reboot (by unplugging and replugging the power cable, I'll change this later for sure, but to be safe, add all the videos you want on the first go).
+
+So... commercials, if you would like them to play after each episode then adjust the variable above `AMOUNT_COMMERCIALS=0` to as many as you like.
+
+**But what about during playback?** You know, when an episode fades to black for a commercial break. Then you have to add stopmarks yourself manually. Tedious, I know, but it does help with videos that have commercials already in them or episodes that lack commercials. With this can ignore those commercials and resume playback or add commercials in ourselves.
+
+In the piTVstation's video folder, you'll notice that `.txt` files were created for every video file. Like so:
+
+```text
+'The Critic s01e04.mp4'
+'The Critic s01e04.txt'
+```
+
+If you look in a `.txt` file for an episode, you'll see it has a number, like:
+
+```text
+1360
+```
+
+That's the **stopmark in seconds**. You can go ahead and alter it like so:
+
+```text
+497
+831
+1360
+```
+
+Now when an episode reaches that mark, it will play `X` amount of commercials then resume playback. If you have the stopmarks set and later decide you're not feeling the commercials, go ahead and set `AMOUNT_COMMERCIALS` back to zero (`nano ~/piTVstation/scripts/piTVstation.sh`). You can always come change it later.
+
 ## Considerations down the line
 
++ When videos are added, reflect changes immediately without rebooting
 + SAMBA server on boot to add videos wirelessly, versus using SFTP to transfer files
 + Using a USB device to watch video from instead of just a Micro SD card
-+ Making a pre-configured image to make installation a breeze, or just making setup process faster and easier
++ Making a pre-configured image to make installation a breeze, or just making the setup process mush faster and easier
++ Backup stopmarks just in case you want another copy
++ Have it play selected Holiday videos during a given timeframe (I'll call it *The Scheduler*)
 
 ## Random tidbits
 
