@@ -123,7 +123,7 @@ In the piTVstation's video folder, you'll notice that `.txt` files were created 
 'The Critic s01e04.txt'
 ```
 
-If you look in a `.txt` file for an episode, you'll see it has a number, like:
+If you look in the `.txt` file for an episode, you'll see it has a number, like:
 
 ```text
 1360
