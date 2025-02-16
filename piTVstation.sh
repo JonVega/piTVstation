@@ -59,7 +59,7 @@ fi
 
 # Generate Stopmarks (run external script)
 # --------------------------------------------
-bash ./createStopmarks.sh
+bash /home/$USER/piTVstation/scripts/./createStopmarks.sh
 
 # Hide Terminal Text
 # --------------------------------------------
