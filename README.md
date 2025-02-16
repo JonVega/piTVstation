@@ -10,7 +10,7 @@ So far, I only tested this with a Raspberry Pi 4 using a composite cable, but I'
 
 Alrighty then, let's start getting your piTVstation setup and ready for use!
 
-*if you know how to image a Raspberry Pi micro SD card and access the Pi using SFTP and SSH, then download [this (Official Raspberry Pi Link)](https://downloads.raspberrypi.com/raspios_lite_armhf/images/raspios_lite_armhf-2024-11-19/2024-11-19-raspios-bookworm-armhf-lite.img.xz) and skip to `Configuring the SD card for first boot`*
+*if you know how to image a Raspberry Pi micro SD card and access the Pi using SFTP and SSH, then download [this image (Official Raspberry Pi Link)](https://downloads.raspberrypi.com/raspios_lite_armhf/images/raspios_lite_armhf-2024-11-19/2024-11-19-raspios-bookworm-armhf-lite.img.xz) and skip to `Configuring the SD card for first boot`*
 
 ### Imaging the Micro SD card
 
@@ -55,18 +55,52 @@ PC - Go to your File Explorer and you should see a drive called `bootfs` click t
 Mac - On the top right click the magnifying glass and type `Terminal` and hit the Enter Key. Then `ssh YOUR_USER_NAME@PI_IP_ADDRESS`, you can see your Pi's IP Address on the TV screen. For example mine would be `ssh jonathan@192.168.0.6`
 
 2. If you haven't already, go ahead and login.
-3. Now that we're in the Pi, let's setup the script and a few programs that are needed.
-4. Type `mkdir ~/piTVstation`
-5. Type `mkdir ~/piTVstation/videos`
-6. Type `mkdir ~/piTVstation/scripts`
-7. Type `mkdir ~/piTVstation/commercials`
-8. Now lets download `vlc` and `mediainfo`. Type `sudo apt install vlc mediainfo` and hit enter. That will download two programs that are currently needed to get the piTVstation running.
-9. Once that's done, we need to get the piTVstation script.
-
+3. Now that we're in the Pi, let's get a few programs that are needed and have piTVstation installed.
+4. Type `mkdir -p ~/piTVstation/{scripts,videos,commercials}`
+5. Type `sudo apt update`
+6. Now lets download `vlc` and `mediainfo`. Type `sudo apt install vlc mediainfo` and hit enter. That will download two programs that are currently needed to get the piTVstation running.
+7. Once that's done, we need to get the piTVstation script.
+8. This command is pretty long, but please type `wget -P ~/piTVstation/scripts https://github.com/JonVega/piTVstation/archive/refs/tags/v.25.2.0.zip`
+9. Then type `unzip -j ~/piTVstation/scripts/v.25.2.0.zip -d ~/piTVstation/scripts/`
+10. Then lastly, type `sudo chmod 755 ~/piTVstation/scripts/{createStopmarks.sh,piTVstation.sh}`
+11. We now have the scripts needed to run piTVstation, so next let's add videos to the Pi! Part 3 is done!
 
 ### Adding videos
 
+1. Videos are added to the folder called `videos` in the `piTVstation` folder. You can use the `scp` command to transfer them to your Pi or an application like WinSCP on Windows or Fetch on Mac.
+2. If you like using the terminal then type something like this to transfer a directory of videos `scp VIDEO.mp4 PI_USERNAME@PI_IP_ADDRESS:~/piTVstation/videos`. Mine would be like `scp ~/Downloads/videos/* jonathan@192.168.0.6:~/piTVstation/videos`, this example transfers all my video files from a folder called `videos` in my `Downloads` folder on my Mac to the piTVstation's video folder.
+
 ### Adding commercials
+
+1. Adding commercials is just like adding videos, but instead of `~/piTVstation/videos` it's `~/piTVstation/commercials`. An example would be `scp ~/Downloads/commercials/* jonathan@192.168.0.6:~/piTVstation/commercials`, this example transfers all my commercial video files from a folder called `commercials` in my `Downloads` folder on my Mac to the piTVstation's commercial folder.
+
+### Configuring piTVstation
+
+1. Let's set the Pi to automatically start the piTVstation when powered on, go ahead and type this `sudo nano /etc/systemd/system/piTVstation.service`
+2. Then paste this (or type it out if using a keyboard):
+
+```text
+[Unit]
+Description=Runs piTVStation script forever
+After=multi-user.target
+
+[Service]
+Type=simple
+Restart=on-failure
+User=jonathan
+ExecStart=/home/jonathan/piTVstation/scripts/piTVstation.sh
+
+[Install]
+WantedBy=multi-user.target
+```
+
+3. Now where it says `User=jonathan`, replace `jonathan` with your Pi's username
+4. And where it says `ExecStart=/home/jonathan/piTVstation/scripts/piTVstation.sh`, change the `jonathan` part to your Pi's username
+5. Press `Control + O`, then hit the Enter key, then `Control + X` to quit
+6. Then back at the terminal, type `sudo chmod 644 /etc/systemd/system/piTVstation.service`
+7. Then type `sudo systemctl daemon-reload`
+8. Then `sudo systemctl enable piTVstation.service`
+9. Lastly, let's restart the Pi by typing `sudo shutdown -r now`
 
 ### What now?
 
@@ -74,8 +108,8 @@ Mac - On the top right click the magnifying glass and type `Terminal` and hit th
 
 + SAMBA server on boot to add videos wirelessly, versus using SFTP to transfer files
 + Using a USB device to watch video from instead of just a Micro SD card
-+ Making a pre-configured image to make installation a breeze
++ Making a pre-configured image to make installation a breeze, or just making setup process faster and easier
 
 ## Random tidbits
 
-+ `vlc` is used because it supports using hardware acceleration versus other video player that use software. Raspberry Pi 4 has hardware acceleration for H264 and H265 (HEVC)
++ `vlc` is used because it supports hardware acceleration versus other video players that use software. Raspberry Pi 4 has hardware acceleration for H264 and H265 (HEVC).
