@@ -7,7 +7,7 @@
 #  | |_) | | | |   \ V /\__ \ || (_| | |_| | (_) | | | |
 #  | .__/|_| |_|    \_/ |___/\__\__,_|\__|_|\___/|_| |_|
 #  |_|
-#                                         version 25.2.2
+#                                         version 25.2.0
 # 
 # Author       : Jonathan Vega
 # Dependencies : cvlc, mediainfo
