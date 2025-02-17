@@ -114,7 +114,7 @@ If you decided to opt-out of using commercials, then you're done! Yay! Just add 
 
 So... commercials, if you would like them to play after each episode then adjust the variable above `AMOUNT_COMMERCIALS=0` to as many as you like.
 
-**But what about during playback?** You know, when an episode fades to black for a commercial break. Then you'll have to add stopmarks yourself manually. Tedious, I know, but it does help with videos that have commercials already in them or episodes that lack commercials. With this can ignore those commercials and resume playback or add commercials in ourselves.
+**But what about during playback?** You know, when an episode fades to black for a commercial break. Then you'll have to add stopmarks yourself manually. Tedious, I know, but it does help with videos that have commercials already in them or episodes that lack commercials. By adding stopmarks manually, we can ignore those commercials and resume playback or add commercials in ourselves.
 
 In the piTVstation's video folder, you'll notice that `.txt` files were created for every video file. Like so:
 
