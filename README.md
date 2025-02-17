@@ -34,8 +34,8 @@ Alrighty then, let's start getting your piTVstation setup and ready for use!
 
 Before we insert the Micro SD card into the Raspberry Pi 4, we have do a few things so that it works on older TVs using RCA composite cables.
 
-Mac - On the Desktop, you should see an image of a SD card called `bootfs` click that
-PC - Go to your File Explorer and you should see a drive called `bootfs` click that
++ Mac - *On the Desktop, you should see an image of a SD card called `bootfs` click that*
++ PC - *Go to your File Explorer and you should see a drive called `bootfs` click that*
 
 1. Open the file called `config.txt` using a text editor (or Notepad / TextEdit)
 2. Where is says `dtoverlay=vc4-kms-v3d`, change that line to be `dtoverlay=vc4-kms-v3d,composite` (basically add `,composite` to that line). Then save and close your text editor.
@@ -52,7 +52,7 @@ PC - Go to your File Explorer and you should see a drive called `bootfs` click t
 
 *You can use a USB keyboard to continue following the steps below, but I recommend remotely logging in with your computer using SSH if you know how to do that since it might be a little hard to see using composite cables*
 
-Mac - On the top right click the magnifying glass and type `Terminal` and hit the Enter Key. Then `ssh YOUR_USER_NAME@PI_IP_ADDRESS`, you can see your Pi's IP Address on the TV screen. For example mine would be `ssh jonathan@192.168.0.6`
++ *Mac - On the top right click the magnifying glass and type `Terminal` and hit the Enter Key. Then `ssh YOUR_USER_NAME@PI_IP_ADDRESS`, you can see your Pi's IP Address on the TV screen. For example mine would be `ssh jonathan@192.168.0.6`*
 
 2. If you haven't already, go ahead and login.
 3. Now that we're in the Pi, let's get a few programs that are needed and have piTVstation installed.
@@ -103,18 +103,18 @@ WantedBy=multi-user.target
 9. We're almost done! next type `nano ~/piTVstation/scripts/piTVstation.sh` and hit Enter
 10. There are only two things you may want to change, once done with below, hit `Control + O` to save and `Control + X` to exit
 
-`AMOUNT_COMMERCIALS=0` - How many commercials should play before resuming playback
-`AUDIO_MODE="--stereo-mode=0"` - 0 for mono, 1 for stereo, 2 for reverse stereo
++ `AMOUNT_COMMERCIALS=0` - How many commercials should play before resuming playback
++ `AUDIO_MODE="--stereo-mode=0"` - 0 for mono, 1 for stereo, 2 for reverse stereo
 
 10. Lastly, let's restart the Pi by typing `sudo shutdown -r now`
 
 ### What now?
 
-If you decided to opt-out of using commercials, then you're done! Yay! Just add videos to your Pi and reboot (by unplugging and replugging the power cable, I'll change this later for sure, but to be safe, add all the videos you want on the first go).
+If you decided to opt-out of using commercials, then you're done! Yay! Just add videos to your Pi and reboot (either by using `ssh` and logging back into the Pi and using the command `sudo shutdown -r now` or by unplugging and replugging the power cable (**not recommended**).
 
 So... commercials, if you would like them to play after each episode then adjust the variable above `AMOUNT_COMMERCIALS=0` to as many as you like.
 
-**But what about during playback?** You know, when an episode fades to black for a commercial break. Then you have to add stopmarks yourself manually. Tedious, I know, but it does help with videos that have commercials already in them or episodes that lack commercials. With this can ignore those commercials and resume playback or add commercials in ourselves.
+**But what about during playback?** You know, when an episode fades to black for a commercial break. Then you'll have to add stopmarks yourself manually. Tedious, I know, but it does help with videos that have commercials already in them or episodes that lack commercials. With this can ignore those commercials and resume playback or add commercials in ourselves.
 
 In the piTVstation's video folder, you'll notice that `.txt` files were created for every video file. Like so:
 
@@ -143,11 +143,15 @@ Now when an episode reaches that mark, it will play `X` amount of commercials th
 
 + When videos are added, reflect changes immediately without rebooting
 + SAMBA server on boot to add videos wirelessly, versus using SFTP to transfer files
-+ Using a USB device to watch video from instead of just a Micro SD card
-+ Making a pre-configured image to make installation a breeze, or just making the setup process mush faster and easier
-+ Backup stopmarks just in case you want another copy
++ Using a USB device to watch videos from instead of just a Micro SD card
++ Import videos using USB instead of WiFi
++ Making a pre-configured image to make installation a breeze, or just making the setup process much faster and easier
++ Backup all stopmarks just in case you want another copy
 + Have it play selected Holiday videos during a given timeframe (I'll call it *The Scheduler*)
++ Change the currently playing video using a remote control or a button using GPIO
++ Is it possible to swap directories to simulate channels using just one Raspberry Pi?
 
 ## Random tidbits
 
++ You could use a bunch of Pis running piTVstation to simulate channels. For example, one Pi could be *90's animation* and another could be *1950's TV*, then use a device like the ChannelPlus 3025 to map each Pi to a selected channel on your TV.
 + `vlc` is used because it supports hardware acceleration versus other video players that use software. Raspberry Pi 4 has hardware acceleration for H264 and H265 (HEVC).

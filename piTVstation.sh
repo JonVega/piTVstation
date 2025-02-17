@@ -7,10 +7,10 @@
 #  | |_) | | | |   \ V /\__ \ || (_| | |_| | (_) | | | |
 #  | .__/|_| |_|    \_/ |___/\__\__,_|\__|_|\___/|_| |_|
 #  |_|
-#                                         version 25.2.1
+#                                         version 25.2.2
 # 
-# Author		: Jonathan Vega
-# Dependencies	: cvlc, mediainfo
+# Author       : Jonathan Vega
+# Dependencies : cvlc, mediainfo
 # 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -19,7 +19,7 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # How many commercials should play before resuming playback
-AMOUNT_COMMERCIALS=0
+AMOUNT_COMMERCIALS=3
 
 # Adjust to how your speakers are configure (in my case, my tv is mono, so 0)
 # options are :0=mono, 1=stereo, 2=reverse stereo, 3=left, 4=right, 5=dolby surround, 6=headphones
@@ -46,13 +46,19 @@ if [[ -z "$VIDEO_DIRECTORY" || -z "$COMMERCIAL_DIRECTORY" || ! -d "$VIDEO_DIRECT
 	exit 1
 fi
 
-# array of videos and subdirectories that ignore .txt files
-VIDEO_FILES=("$VIDEO_DIRECTORY"/*[^.txt])
-# array of all files in commercial directory
-COMMERCIAL_FILES=("$COMMERCIAL_DIRECTORY"/*)
+# this is needed since glob pattern expands to an empty string and creates *[^.txt] when directory is empty
+if [ "$(ls -A "$VIDEO_DIRECTORY")" ]; then
+    # array of videos and subdirectories that ignore .txt files
+	VIDEO_FILES=("$VIDEO_DIRECTORY"/*[^.txt])
+fi
+
+if [ "$(ls -A "$COMMERCIAL_DIRECTORY")" ]; then
+	# array of all files in commercial directory
+	COMMERCIAL_FILES=("$COMMERCIAL_DIRECTORY"/*)
+fi
 
 # check to see if any videos and quit if no videos found
-if [[ ${#VIDEO_FILES[@]} -eq 0 ]]; then
+if [ ${#VIDEO_FILES[@]} -eq 0 ]; then
 	echo "NO VIDEOS IN DIRECTORY - PLEASE ADD VIDEOS AND TRY AGAIN"
 	exit 1
 fi
@@ -72,7 +78,6 @@ do
 	# use octal to read 2 bytes of data as signed integer from urandom without memory address
 	# then get the length of the VIDEO_FILES array
 	RANDOM_VIDEO_INDEX=$(od -An -N2 -i /dev/urandom | awk -v len=${#VIDEO_FILES[@]} '{print $1 % len}')
-	RANDOM_COMMERCIAL_INDEX=$(od -An -N2 -i /dev/urandom | awk -v len=${#COMMERCIAL_FILES[@]} '{print $1 % len}')
 	RESUME_TIME=""
 
 	echo "playing: ${VIDEO_FILES[$RANDOM_VIDEO_INDEX]}"
@@ -84,11 +89,18 @@ do
 			# resume_time is empty, so play file from the beginning until resume time is found from video txt file
 			cvlc --play-and-exit --quiet --no-osd --no-spu $AUDIO_COMPRESSOR_GAIN_FILTER $AUDIO_MODE --run-time=$LINE "${VIDEO_FILES[$RANDOM_VIDEO_INDEX]}"
 		fi
-		# loop and play n amount of commercials
-		for i in $(seq 1 $AMOUNT_COMMERCIALS); do cvlc --play-and-exit --quiet --no-osd --no-spu $AUDIO_COMPRESSOR_GAIN_FILTER $AUDIO_MODE "${COMMERCIAL_FILES[$RANDOM_COMMERCIAL_INDEX]}"; done
+		
+		# check to see if any commercials exist and ignore if no videos found
+		if [ ! ${#COMMERCIAL_FILES[@]} -eq 0 ]; then
+			# loop and play n amount of commercials
+			for i in $(seq 1 $AMOUNT_COMMERCIALS); do
+				RANDOM_COMMERCIAL_INDEX=$(od -An -N2 -i /dev/urandom | awk -v len=${#COMMERCIAL_FILES[@]} '{print $1 % len}')
+				cvlc --play-and-exit --quiet --no-osd --no-spu $AUDIO_COMPRESSOR_GAIN_FILTER $AUDIO_MODE "${COMMERCIAL_FILES[$RANDOM_COMMERCIAL_INDEX]}";
+			done
+		fi
     
 		RESUME_TIME=$LINE
-	# removes the extension for the currently playing video and grabs it txt file
+	# removes the extension for the currently playing video and grabs episode's txt file
 	done < "${VIDEO_FILES[$RANDOM_VIDEO_INDEX]%.*}.txt"
 done
 
