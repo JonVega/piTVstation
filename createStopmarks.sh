@@ -5,14 +5,22 @@
 sumFilesCreated=0
 
 for dir in /home/$USER/piTVstation/videos/*; do
-   if [ ! -f "${dir%.*}.txt" ]; then
-	echo "creating: ${dir%.*}.txt"
-	sumFilesCreated=$((sumFilesCreated+1))
-	touch "${dir%.*}.txt"
-	duration=$(mediainfo --Inform="Video;%Duration%" "$dir")
-	# convert millisecond value to seconds and add to video txt file
-	echo $(( ${duration%.*} / 1000 )) > "${dir%.*}.txt"
-   fi
+	if [[ ! -f "${dir%.*}.txt" && "${dir,,}" == *live* ]]; then
+		echo "creating live: ${dir%.*}.txt"
+		touch "${dir%.*}.txt"
+		echo "86400" > "${dir%.*}.txt" #86400 seconds are in a day
+		sumFilesCreated=$((sumFilesCreated+1))
+	elif [ ! -f "${dir%.*}.txt" ]; then
+		duration=$(mediainfo --Inform="Video;%Duration%" "$dir")
+		if [ -z "$duration" ]; then  # Check if mediainfo duration is empty
+			echo "skipping: $dir"
+        else
+        	echo "creating file: ${dir%.*}.txt"
+        	touch "${dir%.*}.txt"
+        	echo $(( ${duration%.*} / 1000 )) > "${dir%.*}.txt"  # Convert ms to seconds
+        	sumFilesCreated=$((sumFilesCreated+1))
+        fi
+	fi
 done
 
 echo "$sumFilesCreated .txt files created"
