@@ -25,6 +25,9 @@ AMOUNT_COMMERCIALS=3
 # options are :0=mono, 1=stereo, 2=reverse stereo, 3=left, 4=right, 5=dolby surround, 6=headphones
 AUDIO_MODE="--stereo-mode=0"
 
+# Leave empty for no cropping or change to 4:3 or 16:9 (--crop=4:3)
+CROP_VIDEO="--crop=4:3"
+
 # -----------------------------------------------------------------------------
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -73,6 +76,9 @@ sudo sh -c "TERM=linux setterm -foreground black -clear all >/dev/tty0"
 
 # Start Playback
 # --------------------------------------------
+
+CVLC_BASE_COMMAND='cvlc --play-and-exit --quiet --no-osd --no-spu'
+
 while [ 1 ]
 do
 	# use octal to read 2 bytes of data as signed integer from urandom without memory address
@@ -84,10 +90,10 @@ do
 
 	while IFS= read -r LINE; do
     	if [ ! -z RESUME_TIME ]; then #if resume_time string is not empty - so if I know where to resume at
-    		cvlc --play-and-exit --quiet --no-osd --no-spu $AUDIO_COMPRESSOR_GAIN_FILTER $AUDIO_MODE --start-time=$RESUME_TIME --stop-time=$LINE "${VIDEO_FILES[$RANDOM_VIDEO_INDEX]}"
+    		$CVLC_BASE_COMMAND $AUDIO_COMPRESSOR_GAIN_FILTER $AUDIO_MODE $CROP_VIDEO --start-time=$RESUME_TIME --stop-time=$LINE "${VIDEO_FILES[$RANDOM_VIDEO_INDEX]}"
 		else
 			# resume_time is empty, so play file from the beginning until resume time is found from video txt file
-			cvlc --play-and-exit --quiet --no-osd --no-spu $AUDIO_COMPRESSOR_GAIN_FILTER $AUDIO_MODE --run-time=$LINE "${VIDEO_FILES[$RANDOM_VIDEO_INDEX]}"
+			$CVLC_BASE_COMMAND $AUDIO_COMPRESSOR_GAIN_FILTER $AUDIO_MODE $CROP_VIDEO --run-time=$LINE "${VIDEO_FILES[$RANDOM_VIDEO_INDEX]}"
 		fi
 		
 		# check to see if any commercials exist and ignore if no videos found
@@ -95,7 +101,7 @@ do
 			# loop and play n amount of commercials
 			for i in $(seq 1 $AMOUNT_COMMERCIALS); do
 				RANDOM_COMMERCIAL_INDEX=$(od -An -N2 -i /dev/urandom | awk -v len=${#COMMERCIAL_FILES[@]} '{print $1 % len}')
-				cvlc --play-and-exit --quiet --no-osd --no-spu $AUDIO_COMPRESSOR_GAIN_FILTER $AUDIO_MODE "${COMMERCIAL_FILES[$RANDOM_COMMERCIAL_INDEX]}";
+				$CVLC_BASE_COMMAND $AUDIO_COMPRESSOR_GAIN_FILTER $AUDIO_MODE $CROP_VIDEO "${COMMERCIAL_FILES[$RANDOM_COMMERCIAL_INDEX]}";
 			done
 		fi
     

@@ -3,7 +3,7 @@
 # this script creates txt files with the runtime (in seconds) for each video in ~/piTVstation/videos
 
 SUM_FILES_CREATED=0
-LIVE_M3U8_SECONDS_DURATION=30
+LIVE_M3U8_SECONDS_DURATION=3600 #1 hour
 
 for dir in /home/$USER/piTVstation/videos/*; do
 	if [[ ! -f "${dir%.*}.txt" && "${dir,,}" == *live* ]]; then
