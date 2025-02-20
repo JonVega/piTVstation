@@ -15,7 +15,7 @@ Alrighty then, let's start getting your piTVstation setup and ready for use!
 ### Imaging the Micro SD card
 
 1. First download the [Raspberry Pi Imager](https://www.raspberrypi.com/software/) if you haven't already
-2. Then download the [Raspberry Pi Lite x64 Image (Official Link)](https://downloads.raspberrypi.com/raspios_lite_armhf/images/raspios_lite_armhf-2024-11-19/2024-11-19-raspios-bookworm-armhf-lite.img.xz) (`2024-11-19-raspios-bookworm-armhf-lite.img.xz`)
+2. Then download the [Raspberry Pi Lite Image (Official Link)](https://downloads.raspberrypi.com/raspios_lite_armhf/images/raspios_lite_armhf-2024-11-19/2024-11-19-raspios-bookworm-armhf-lite.img.xz) (`2024-11-19-raspios-bookworm-armhf-lite.img.xz`)
 3. Insert the Micro SD card you want to format and open the Raspberry Pi Imager. Note that everything on the SD card will be deleted, so make sure that you're alright with that
 4. Ignore the first box and click the second box labeled `Choose OS`
 5. Scroll all the way down to `Use custom` and click that
@@ -56,7 +56,7 @@ Before we insert the Micro SD card into the Raspberry Pi 4, we have do a few thi
 
 2. If you haven't already, go ahead and login.
 3. Now that we're in the Pi, let's get a few programs that are needed and have piTVstation installed.
-4. Type `mkdir -p ~/piTVstation/{scripts,videos,commercials}`
+4. Type `mkdir -p ~/piTVstation/{scripts,videos,commercials,backups}`
 5. Type `sudo apt update`
 6. Now lets download `vlc` and `mediainfo`. Type `sudo apt install vlc mediainfo` and hit enter. That will download two programs that are currently needed to get the piTVstation running.
 7. Once that's done, we need to get the piTVstation script.
@@ -139,6 +139,8 @@ That's the **stopmark in seconds**. You can go ahead and alter it like so:
 
 Now when an episode reaches that mark, it will play `X` amount of commercials then resume playback. If you have the stopmarks set and later decide you're not feeling the commercials, go ahead and set `AMOUNT_COMMERCIALS` back to zero (`nano ~/piTVstation/scripts/piTVstation.sh`). You can always come change it later.
 
+Once you have taken the time to add a bunch of stopmarks for your videos, just restart the Pi and a backup will automatically be created in the `backups` folder as a zip file.
+
 ## Considerations down the line
 
 + When videos are added, reflect changes immediately without rebooting
@@ -146,7 +148,6 @@ Now when an episode reaches that mark, it will play `X` amount of commercials th
 + Using a USB device to watch videos from instead of just a Micro SD card
 + Import videos using USB instead of WiFi
 + Making a pre-configured image to make installation a breeze, or just making the setup process much faster and easier
-+ Backup all stopmarks just in case you want another copy
 + Have it play selected Holiday videos during a given timeframe (I'll call it *The Scheduler*)
 + Change the currently playing video using a remote control or a button using GPIO
 + Is it possible to swap directories to simulate channels using just one Raspberry Pi?
