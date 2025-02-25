@@ -5,29 +5,29 @@
 # User Changeable Variables
 # ----------------------------------
 
-LIVE_M3U8_SECONDS_DURATION=3600 #1 hour
-BACKUP_STOPMARKS_DIRECTORY="/home/$USER/piTVstation/backups"
+live_m3u8_seconds_duration=3600 #1 hour
+backup_stopmarks_directory="/home/$USER/piTVstation/backups"
 
 # Script Variables
 # ----------------------------------
 
-SUM_FILES_CREATED=0
-VIDEO_FOLDER_LOCATION="/home/$USER/piTVstation/videos"
-STOPMARKS_BACKUP_FILE="stopmarks_backup_$(date +'%Y-%m-%d_%H_%M_%S').zip"
-AVAILABLE_SD_SIZE=$(df /dev/mmcblk0p2 | tail -1 | awk '{print $4}')
-ESTIMATED_SD_SIZE=$(du -sb "$BACKUP_STOPMARKS_DIRECTORY" | awk '{print $1}')
+sum_files_created=0
+video_folder_location="/home/$USER/piTVstation/videos"
+stopmarks_backup_file="stopmarks_backup_$(date +'%Y-%m-%d_%H_%M_%S').zip"
+available_sd_size=$(df /dev/mmcblk0p2 | tail -1 | awk '{print $4}')
+estimated_sd_size=$(du -sb "$backup_stopmarks_directory" | awk '{print $1}')
 
 # Backup Stopmarks
 # ----------------------------------
 
-echo "$AVAILABLE_SD_SIZE"
-echo "$ESTIMATED_SD_SIZE"
+echo "$available_sd_size"
+echo "$estimated_sd_size"
 
 # Check if there is enough space
-if [ "$AVAILABLE_SD_SIZE" -gt "$ESTIMATED_SD_SIZE" ]; then
+if [ "$available_sd_size" -gt "$estimated_sd_size" ]; then
 	# if the video folder has .txt already, then back them all up
-    if ls -A "$VIDEO_FOLDER_LOCATION"/*.txt &> /dev/null; then
-    	zip -rj $BACKUP_STOPMARKS_DIRECTORY/$STOPMARKS_BACKUP_FILE $VIDEO_FOLDER_LOCATION -i \*.txt
+    if ls -A "$video_folder_location"/*.txt &> /dev/null; then
+    	zip -rj $backup_stopmarks_directory/$stopmarks_backup_file $video_folder_location -i \*.txt
 	else
     	echo "no .txt files found - skipping backup."
 	fi
@@ -38,24 +38,24 @@ fi
 # Stopmark Creation
 # ----------------------------------
 
-for video_dir in $VIDEO_FOLDER_LOCATION/*; do
+for video_dir in $video_folder_location/*; do
 	if [[ ! -f "${video_dir%.*}.txt" && "${video_dir,,}" == *live* ]]; then
 		
 		echo "creating live: ${video_dir%.*}.txt"
 		touch "${video_dir%.*}.txt"
-		echo "$LIVE_M3U8_SECONDS_DURATION" > "${video_dir%.*}.txt" #86400 seconds are in a day
-		SUM_FILES_CREATED=$((SUM_FILES_CREATED+1))
+		echo "$live_m3u8_seconds_duration" > "${video_dir%.*}.txt" #86400 seconds are in a day
+		sum_files_created=$((sum_files_created+1))
 	elif [ ! -f "${video_dir%.*}.txt" ]; then
 		duration=$(mediainfo --Inform="Video;%Duration%" "$video_dir")
 		if [ -z "$duration" ]; then  # Check if mediainfo duration is empty
 			echo "skipping: $video_dir"
 		else
-        	echo "creating file: ${video_dir%.*}.txt"
+        	echo "creating: ${video_dir%.*}.txt"
         	touch "${video_dir%.*}.txt"
         	echo $(( ${duration%.*} / 1000 )) > "${video_dir%.*}.txt"  # Convert ms to seconds
-        	SUM_FILES_CREATED=$((SUM_FILES_CREATED+1))
+        	sum_files_created=$((sum_files_created+1))
         fi
 	fi
 done
 
-echo "$SUM_FILES_CREATED .txt files created"
+echo "$sum_files_created .txt files created"
