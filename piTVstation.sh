@@ -28,15 +28,21 @@ audio_mode="--stereo-mode=0"
 # Leave empty for no cropping or change to 4:3 or 16:9 (--crop=4:3)
 crop_video="--crop=4:3"
 
+web_interface="-I http --http-port=8080 --http-password=$USER"
+
 # -----------------------------------------------------------------------------
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-#  !!! ADVANCE - ONLY ALTER BELOW IF YOU KNOW WHAT YOU'RE DOING !!! #
+# !!! ADVANCE - ONLY ALTER BELOW IF YOU KNOW WHAT YOU'RE DOING !!!  #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # Some videos can be very loud or quiet, so adjust below variable to set desired level
 # Value can be number from 1 to 24, put a hash mark (#) to disable
 audio_compressor_gain_filter="--audio-filter=compressor --compressor-rms-peak=0.00 --compressor-attack=24.00 --compressor-release=250.00 --compressor-threshold=-25.00 --compressor-ratio=2.00 --compressor-knee=4.50 --compressor-makeup-gain=12.0"
+
+# # # # # # # # # # #
+# SCRIPT EXECUTION  #
+# # # # # # # # # # #
 
 # Grabbing Videos
 #---------------------------------------------
@@ -90,10 +96,10 @@ do
 
 	while ifs= read -r line; do
     	if [ ! -z resume_time ]; then #if resume_time string is not empty - so if I know where to resume at
-    		$cvlc_base_command $audio_compressor_gain_filter $audio_mode $crop_video --start-time=$resume_time --stop-time=$line "${video_files[$random_video_index]}"
+    		$cvlc_base_command $web_interface $audio_compressor_gain_filter $audio_mode $crop_video --start-time=$resume_time --stop-time=$line "${video_files[$random_video_index]}"
 		else
 			# resume_time is empty, so play file from the beginning until resume time is found from video txt file
-			$cvlc_base_command $audio_compressor_gain_filter $audio_mode $crop_video --run-time=$line "${video_files[$random_video_index]}"
+			$cvlc_base_command $web_interface $audio_compressor_gain_filter $audio_mode $crop_video --run-time=$line "${video_files[$random_video_index]}"
 		fi
 		
 		# check to see if any commercials exist and ignore if no videos found
@@ -101,7 +107,7 @@ do
 			# loop and play n amount of commercials
 			for i in $(seq 1 $amount_commercials); do
 				random_commercial_index=$(od -An -N2 -i /dev/urandom | awk -v len=${#commercial_files[@]} '{print $1 % len}')
-				$cvlc_base_command $audio_compressor_gain_filter $audio_mode $crop_video "${commercial_files[$random_commercial_index]}";
+				$cvlc_base_command $web_interface $audio_compressor_gain_filter $audio_mode $crop_video "${commercial_files[$random_commercial_index]}";
 			done
 		fi
     
