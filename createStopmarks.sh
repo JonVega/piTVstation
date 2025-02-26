@@ -3,13 +3,13 @@
 # this script creates txt files with the runtime (in seconds) for each video in ~/piTVstation/videos
 
 # User Changeable Variables
-# ----------------------------------
+# -------------------------------------------
 
 live_m3u8_seconds_duration=3600 #1 hour
 backup_stopmarks_directory="/home/$USER/piTVstation/backups"
 
 # Script Variables
-# ----------------------------------
+# -------------------------------------------
 
 sum_files_created=0
 video_folder_location="/home/$USER/piTVstation/videos"
@@ -17,8 +17,16 @@ stopmarks_backup_file="stopmarks_backup_$(date +'%Y-%m-%d_%H_%M_%S').zip"
 available_sd_size=$(df /dev/mmcblk0p2 | tail -1 | awk '{print $4}')
 estimated_sd_size=$(du -sb "$backup_stopmarks_directory" | awk '{print $1}')
 
+# Delete Dot Files (usually cause by macOS)
+# -------------------------------------------
+
+rm /home/$USER/piTVstation/.*
+rm /home/$USER/piTVstation/videos/.*
+rm /home/$USER/piTVstation/scripts/.*
+rm /home/$USER/piTVstation/commercials/.*
+
 # Backup Stopmarks
-# ----------------------------------
+# -------------------------------------------
 
 echo "$available_sd_size"
 echo "$estimated_sd_size"
@@ -36,7 +44,7 @@ else
 fi
 
 # Stopmark Creation
-# ----------------------------------
+# -------------------------------------------
 
 for video_dir in $video_folder_location/*; do
 	if [[ ! -f "${video_dir%.*}.txt" && "${video_dir,,}" == *live* ]]; then
