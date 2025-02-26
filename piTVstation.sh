@@ -44,6 +44,13 @@ audio_compressor_gain_filter="--audio-filter=compressor --compressor-rms-peak=0.
 # SCRIPT EXECUTION  #
 # # # # # # # # # # #
 
+trap control_c INT
+
+control_c() {
+    echo "terminating piTVstation"
+    exit 1
+}
+
 # Grabbing Videos
 #---------------------------------------------
 video_directory="/home/$USER/piTVstation/videos"
