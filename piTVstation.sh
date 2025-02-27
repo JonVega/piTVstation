@@ -88,10 +88,6 @@ fi
 # --------------------------------------------
 bash /home/$USER/piTVstation/scripts/./createStopmarks.sh
 
-# Hide Terminal Text
-# --------------------------------------------
-sudo sh -c "TERM=linux setterm -foreground black -clear all >/dev/tty0"
-
 # Start Playback
 # --------------------------------------------
 
@@ -107,6 +103,10 @@ do
 		video_files=("$video_directory"/*[^.txt])
 		bash /home/$USER/piTVstation/scripts/./createStopmarks.sh
 	fi
+	
+	# Hide Terminal Text
+	# --------------------------------------------
+	sudo sh -c "TERM=linux setterm -foreground black -clear all >/dev/tty0"
 
 	# use octal to read 2 bytes of data as signed integer from urandom without memory address
 	# then get the length of the video_files array
