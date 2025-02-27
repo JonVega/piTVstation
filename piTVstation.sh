@@ -47,7 +47,7 @@ audio_compressor_gain_filter="--audio-filter=compressor --compressor-rms-peak=0.
 trap control_c INT
 
 control_c() {
-    echo "terminating piTVstation"
+    echo -e "\npiTVstation signing off"
     exit 1
 }
 
@@ -67,7 +67,7 @@ if [ "$(ls -A "$video_directory")" ]; then
     # array of videos and subdirectories that ignore .txt files
 	video_files=("$video_directory"/*[^.txt])
 fi
-
+echo "DEBUG1"
 if [ "$(ls -A "$commercial_directory")" ]; then
 	# array of all files in commercial directory
 	commercial_files=("$commercial_directory"/*)
@@ -75,10 +75,15 @@ fi
 
 # check to see if any videos and quit if no videos found
 if [ ${#video_files[@]} -eq 0 ]; then
-	echo "NO VIDEOS IN DIRECTORY - PLEASE ADD VIDEOS AND TRY AGAIN"
-	exit 1
+	#echo "NO VIDEOS IN DIRECTORY - PLEASE ADD VIDEOS AND TRY AGAIN"
+	while ! (sudo smbstatus -L 2>&1 >/dev/null | grep -qF 'No locked files') || [[ ${#video_files[@]} -ge $(ls /home/$USER/piTVstation/videos/*[^.txt] 2>/dev/null | wc -l) ]];
+	do
+		echo "Please add videos to $video_directory and eject from SMB share"
+		sleep 2
+	done
+	video_files=("$video_directory"/*[^.txt])
 fi
-
+echo "DEBUG2"
 # Generate Stopmarks (run external script)
 # --------------------------------------------
 bash /home/$USER/piTVstation/scripts/./createStopmarks.sh
@@ -91,7 +96,7 @@ sudo sh -c "TERM=linux setterm -foreground black -clear all >/dev/tty0"
 # --------------------------------------------
 
 cvlc_base_command='cvlc --play-and-exit --quiet --no-osd --no-spu'
-
+echo "DEBUG3"
 while [ 1 ]
 do
 	# use octal to read 2 bytes of data as signed integer from urandom without memory address
