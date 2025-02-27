@@ -67,7 +67,7 @@ if [ "$(ls -A "$video_directory")" ]; then
     # array of videos and subdirectories that ignore .txt files
 	video_files=("$video_directory"/*[^.txt])
 fi
-echo "DEBUG1"
+
 if [ "$(ls -A "$commercial_directory")" ]; then
 	# array of all files in commercial directory
 	commercial_files=("$commercial_directory"/*)
@@ -83,7 +83,7 @@ if [ ${#video_files[@]} -eq 0 ]; then
 	done
 	video_files=("$video_directory"/*[^.txt])
 fi
-echo "DEBUG2"
+
 # Generate Stopmarks (run external script)
 # --------------------------------------------
 bash /home/$USER/piTVstation/scripts/./createStopmarks.sh
@@ -96,9 +96,18 @@ sudo sh -c "TERM=linux setterm -foreground black -clear all >/dev/tty0"
 # --------------------------------------------
 
 cvlc_base_command='cvlc --play-and-exit --quiet --no-osd --no-spu'
-echo "DEBUG3"
+
 while [ 1 ]
 do
+
+	# if videos have been added, and no one is connected to the Pi via SMB, then update videos
+	if (sudo smbstatus -L 2>&1 >/dev/null | grep -qF 'No locked files') && [[ ${#video_files[@]} -lt $(ls /home/$USER/piTVstation/videos/*[^.txt] 2>/dev/null | wc -l) ]]; then
+		echo "SAMBA Server has no locked files and videos were added, rebuilding video array"
+		video_files=()
+		video_files=("$video_directory"/*[^.txt])
+		bash /home/$USER/piTVstation/scripts/./createStopmarks.sh
+	fi
+
 	# use octal to read 2 bytes of data as signed integer from urandom without memory address
 	# then get the length of the video_files array
 	random_video_index=$(od -An -N2 -i /dev/urandom | awk -v len=${#video_files[@]} '{print $1 % len}')
