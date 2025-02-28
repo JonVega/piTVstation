@@ -101,7 +101,7 @@ while [ 1 ]
 do
 
 	# if videos have been added, and no one is connected to the Pi via SMB, then update videos
-	if (sudo smbstatus -L 2>&1 >/dev/null | grep -qF 'No locked files') && [[ ${#video_files[@]} -lt $(ls /home/$USER/piTVstation/videos/*[^.txt] 2>/dev/null | wc -l) ]]; then
+	if (sudo smbstatus -L 2>&1 >/dev/null | grep -qF 'No locked files') && [[ ${#video_files[@]} -ne $(ls /home/$USER/piTVstation/videos/*[^.txt] 2>/dev/null | wc -l) ]]; then
 		echo "SAMBA Server has no locked files and videos were added, rebuilding video array"
 		video_files=()
 		readarray -t video_files < <(find $video_directory -maxdepth 1 -type f ! -name "*.txt")
