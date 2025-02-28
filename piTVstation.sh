@@ -47,6 +47,8 @@ audio_compressor_gain_filter="--audio-filter=compressor --compressor-rms-peak=0.
 trap control_c INT
 
 control_c() {
+	# unhide text on the display you're connected to
+	sudo sh -c "TERM=linux setterm -foreground white -clear all >/dev/tty0"
     echo -e "\npiTVstation signing off"
     exit 1
 }
@@ -58,16 +60,18 @@ commercial_directory="/home/$USER/piTVstation/commercials"
 
 # check if directory string is empty or if directory exists
 if [[ -z "$video_directory" || -z "$commercial_directory" || ! -d "$video_directory" || ! -d "$commercial_directory" ]]; then
-	echo "INVALID VIDEO AND COMMERCIAL DIRECTORY STRUCTURE"
+	echo "INVALID VIDEO DIRECTORY STRUCTURE - Try Running The Installer Script Again"
 	exit 1
 fi
 
 # this is needed since glob pattern expands to an empty string and creates *[^.txt] when directory is empty
+# if then directory is not empty, then populate the video array
 if [ "$(ls -A "$video_directory")" ]; then
     # array of videos and subdirectories that ignore .txt files
-	video_files=("$video_directory"/*[^.txt])
+    readarray -t video_files < <(find $video_directory -maxdepth 1 -type f ! -name "*.txt")
 fi
 
+# if then directory is not empty, then populate the video array
 if [ "$(ls -A "$commercial_directory")" ]; then
 	# array of all files in commercial directory
 	commercial_files=("$commercial_directory"/*)
@@ -81,7 +85,7 @@ if [ ${#video_files[@]} -eq 0 ]; then
 		echo "Please add videos to $video_directory and eject from SMB share"
 		sleep 2
 	done
-	video_files=("$video_directory"/*[^.txt])
+	readarray -t video_files < <(find $video_directory -maxdepth 1 -type f ! -name "*.txt")
 fi
 
 # Generate Stopmarks (run external script)
@@ -100,10 +104,10 @@ do
 	if (sudo smbstatus -L 2>&1 >/dev/null | grep -qF 'No locked files') && [[ ${#video_files[@]} -lt $(ls /home/$USER/piTVstation/videos/*[^.txt] 2>/dev/null | wc -l) ]]; then
 		echo "SAMBA Server has no locked files and videos were added, rebuilding video array"
 		video_files=()
-		video_files=("$video_directory"/*[^.txt])
+		readarray -t video_files < <(find $video_directory -maxdepth 1 -type f ! -name "*.txt")
 		bash /home/$USER/piTVstation/scripts/./createStopmarks.sh
 	fi
-	
+
 	# Hide Terminal Text
 	# --------------------------------------------
 	sudo sh -c "TERM=linux setterm -foreground black -clear all >/dev/tty0"
@@ -136,6 +140,3 @@ do
 	# removes the extension for the currently playing video and grabs episode's txt file
 	done < "${video_files[$random_video_index]%.*}.txt"
 done
-
-# unhide text on the display you're connected to
-sudo sh -c "TERM=linux setterm -foreground white -clear all >/dev/tty0"
