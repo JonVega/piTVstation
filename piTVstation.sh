@@ -79,13 +79,15 @@ fi
 
 # check to see if any videos and quit if no videos found
 if [ ${#video_files[@]} -eq 0 ]; then
-	#echo "NO VIDEOS IN DIRECTORY - PLEASE ADD VIDEOS AND TRY AGAIN"
+	cvlc --quiet --no-osd --no-spu -L /home/$USER/piTVstation/assets/RCA_Indian_Head_test_pattern.JPG &
+	running_pid=$!
 	while ! (sudo smbstatus -L 2>&1 >/dev/null | grep -qF 'No locked files') || [[ ${#video_files[@]} -ge $(ls /home/$USER/piTVstation/videos/*[^.txt] 2>/dev/null | wc -l) ]];
 	do
 		echo "Please add videos to $video_directory and eject from SMB share"
 		sleep 2
 	done
 	readarray -t video_files < <(find $video_directory -maxdepth 1 -type f ! -name "*.txt")
+	kill ${running_pid}
 fi
 
 # Generate Stopmarks (run external script)
@@ -140,3 +142,5 @@ do
 	# removes the extension for the currently playing video and grabs episode's txt file
 	done < "${video_files[$random_video_index]%.*}.txt"
 done
+
+sudo sh -c "TERM=linux setterm -foreground white -clear all >/dev/tty0"
