@@ -7,12 +7,12 @@
 
 live_m3u8_seconds_duration=3600 #1 hour
 backup_stopmarks_directory="/home/$USER/piTVstation/backups"
+video_folder_location="/home/$USER/piTVstation/videos"
 
 # Script Variables
 # -------------------------------------------
 
 sum_files_created=0
-video_folder_location="/home/$USER/piTVstation/videos"
 stopmarks_backup_file="stopmarks_backup_$(date +'%Y-%m-%d_%H_%M_%S').zip"
 available_sd_size=$(df /dev/mmcblk0p2 | tail -1 | awk '{print $4}')
 estimated_sd_size=$(du -sb "$backup_stopmarks_directory" | awk '{print $1}')
@@ -20,27 +20,54 @@ estimated_sd_size=$(du -sb "$backup_stopmarks_directory" | awk '{print $1}')
 # Delete Dot Files (usually cause by macOS)
 # -------------------------------------------
 
-rm /home/$USER/piTVstation/.*
-rm /home/$USER/piTVstation/videos/.*
-rm /home/$USER/piTVstation/scripts/.*
-rm /home/$USER/piTVstation/commercials/.*
+# From Video Folder
+if [ $(find $video_folder_location -maxdepth 1 -type f -name ".*" | wc -l) -gt 0 ]; then
+	echo "Removing hidden dot files from $video_folder_location"
+	rm $video_folder_location/.*
+fi
+
+# From Backups Folder
+if [ $(find $backup_stopmarks_directory -maxdepth 1 -type f -name ".*" | wc -l) -gt 0 ]; then
+	echo "Removing hidden dot files from $backup_stopmarks_directory"
+	rm $backup_stopmarks_directory/.*
+fi
+
+# From Scripts Folder
+if [ $(find /home/$USER/piTVstation/scripts -maxdepth 1 -type f -name ".*" | wc -l) -gt 0 ]; then
+	echo "Removing hidden dot files from /home/$USER/piTVstation/scripts"
+	rm /home/$USER/piTVstation/scripts/.*
+fi
+
+# From Video Folder
+if [ $(find /home/$USER/piTVstation/commercials -maxdepth 1 -type f -name ".*" | wc -l) -gt 0 ]; then
+	echo "Removing hidden dot files from /home/$USER/piTVstation/commercials"
+	rm /home/$USER/piTVstation/commercials/.*
+fi
+
+# From piTVstation Folder
+if [ $(find /home/$USER/piTVstation -maxdepth 1 -type f -name ".*" | wc -l) -gt 0 ]; then
+	echo "Removing hidden dot files from /home/$USER/piTVstation"
+	rm /home/$USER/piTVstation/.*
+fi
 
 # Backup Stopmarks
 # -------------------------------------------
 
-echo "$available_sd_size"
-echo "$estimated_sd_size"
+echo "Avaiable  SD Card Space: $available_sd_size"
+echo "Estimated SD Card Space: $estimated_sd_size"
 
 # Check if there is enough space
 if [ "$available_sd_size" -gt "$estimated_sd_size" ]; then
 	# if the video folder has .txt already, then back them all up
     if ls -A "$video_folder_location"/*.txt &> /dev/null; then
+    	echo "Zipping Stopmarks"
     	zip -rj $backup_stopmarks_directory/$stopmarks_backup_file $video_folder_location -i \*.txt
+    	echo "Zipping DONE"
 	else
-    	echo "no .txt files found - skipping backup."
+    	echo "no .txt stopmark files found - skipping backup."
 	fi
 else
-    echo "ERROR - INSUFFICIENT SPACE TO CREATE BACKUP"
+    echo "INSUFFICIENT SPACE TO CREATE BACKUP - TRY TO FREE UP SOME SPACE"
 fi
 
 # Stopmark Creation
