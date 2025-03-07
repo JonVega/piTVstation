@@ -44,6 +44,7 @@ wget -P ~/ "https://github.com/JonVega/piTVstation/archive/refs/tags/$piTVstatio
 
 echo "        // Unzipping piTVstation"
 unzip -jo ~/$piTVstation_latest_release_tag_name.zip -d $piTVstation_Directory_Location/scripts/
+mv $piTVstation_Directory_Location/scripts/RCA_Indian_Head_test_pattern.JPG $piTVstation_Directory_Location/assets/
 
 echo "        // Deleting Downloaded piTVstation ZIP File"
 rm ~/$piTVstation_latest_release_tag_name.zip
