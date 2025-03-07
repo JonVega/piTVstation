@@ -11,7 +11,8 @@
 # 
 # Author       : Jonathan Vega
 # Dependencies : cvlc, mediainfo
-# 
+# License	   ; See Below at the end of file 
+#
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -31,6 +32,8 @@ crop_video="--crop=4:3"
 # where it says '--http-password=$USER', replace $USER to whatever password you want
 # i.e. --http-password=peanutbutterjellytime
 web_interface="-I http --http-port=8080 --http-password=$USER"
+
+piTVstation_Directory_Location="$HOME/piTVstation"
 
 # -----------------------------------------------------------------------------
 
@@ -57,8 +60,8 @@ control_c() {
 
 # Grabbing Videos
 #---------------------------------------------
-video_directory="/home/$USER/piTVstation/videos"
-commercial_directory="/home/$USER/piTVstation/commercials"
+video_directory="$piTVstation_Directory_Location/videos"
+commercial_directory="$piTVstation_Directory_Location/commercials"
 
 # check if directory string is empty or if directory exists
 if [[ -z "$video_directory" || -z "$commercial_directory" || ! -d "$video_directory" || ! -d "$commercial_directory" ]]; then
@@ -146,3 +149,26 @@ do
 done
 
 sudo sh -c "TERM=linux setterm -foreground white -clear all >/dev/tty0"
+
+# MIT License
+#
+# Copyright (c) 2025 Jonathan Vega
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+#furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
