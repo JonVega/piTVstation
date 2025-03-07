@@ -6,13 +6,14 @@
 # -------------------------------------------
 
 live_m3u8_seconds_duration=3600 #1 hour
-backup_stopmarks_directory="/home/$USER/piTVstation/backups"
-video_folder_location="/home/$USER/piTVstation/videos"
+piTVstation_Directory_Location="$HOME/piTVstation"
 
 # Script Variables
 # -------------------------------------------
 
 sum_files_created=0
+backup_stopmarks_directory="$piTVstation_Directory_Location/backups"
+video_folder_location="$piTVstation_Directory_Location/videos"
 stopmarks_backup_file="stopmarks_backup_$(date +'%Y-%m-%d_%H_%M_%S').zip"
 available_sd_size=$(df /dev/mmcblk0p2 | tail -1 | awk '{print $4}')
 estimated_sd_size=$(du -sb "$backup_stopmarks_directory" | awk '{print $1}')
