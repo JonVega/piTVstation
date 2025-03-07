@@ -28,6 +28,8 @@ audio_mode="--stereo-mode=0"
 # Leave empty for no cropping or change to 4:3 or 16:9 (--crop=4:3)
 crop_video="--crop=4:3"
 
+# where it says '--http-password=$USER', replace $USER to whatever password you want
+# i.e. --http-password=peanutbutterjellytime
 web_interface="-I http --http-port=8080 --http-password=$USER"
 
 # -----------------------------------------------------------------------------
