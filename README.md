@@ -66,6 +66,8 @@ Before we insert the Micro SD card into the Raspberry Pi 4, we have do a few thi
 
 **If you do not want to have commercials playing, then you are done! Go ahead and eject, on macOS at least, piTVstation from the network. A random video should now be playing, and whenever you want to add more videos, go ahead and connect to the piTVstation and drop some more videos. When an episode is finished, it will automatically add your new videos for random playback. Have Fun!**
 
+4. Now if you're watching an episode you **realllllly** don't want to watch, you can skip to the next stopmark by going to `http://PI_IP_ADDRESS:8080` *(i.e. `http://192.168.0.6:8080`)*. Leave the username empty and the password is your piTVstation's username. Click the stop button to go to the next stopmark. 
+
 ### Adding Commercials - Part 5
 
 1. Adding commercials is just like adding videos
