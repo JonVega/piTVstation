@@ -1,22 +1,18 @@
 # piTVstation
 
-Turn your Raspberry Pi 4, that uses a composite cable, into a retro tv station that plays random episodes forever. Commercials can also be added during commercial breaks or just after an episode finishes.
-
-I'm currently working on setting up this up to be more streamlined and user friendly. But until then, you can start having fun and relive the era of television before video streaming.
+Relive the era of television before video streaming! Turn your Raspberry Pi 4, that uses a composite cable, into a retro tv station that plays random episodes forever using VLC. Commercials can also be added during commercial breaks or just after an episode finishes.
 
 So far, I only tested this with a Raspberry Pi 4 using a composite cable, but I'll give an update on other models and computers.
 
-## Getting your piTVstation up and running
+## Getting Your piTVstation Up And Running
 
 Alrighty then, let's start getting your piTVstation setup and ready for use!
 
-*if you know how to image a Raspberry Pi micro SD card and access the Pi using SFTP and SSH, then download [this image (Official Raspberry Pi Link)](https://downloads.raspberrypi.com/raspios_lite_armhf/images/raspios_lite_armhf-2024-11-19/2024-11-19-raspios-bookworm-armhf-lite.img.xz) and skip to `Configuring the SD card for first boot`*
-
-### Imaging the Micro SD card
+### Imaging The Micro SD card - Part 1
 
 1. First download the [Raspberry Pi Imager](https://www.raspberrypi.com/software/) if you haven't already
-2. Then download the [Raspberry Pi Lite Image (Official Link)](https://downloads.raspberrypi.com/raspios_lite_armhf/images/raspios_lite_armhf-2024-11-19/2024-11-19-raspios-bookworm-armhf-lite.img.xz) (`2024-11-19-raspios-bookworm-armhf-lite.img.xz`)
-3. Insert the Micro SD card you want to format and open the Raspberry Pi Imager. Note that everything on the SD card will be deleted, so make sure that you're alright with that
+2. Then download the [Raspberry Pi Lite Image (Official Link)](https://downloads.raspberrypi.com/raspios_lite_armhf/images/raspios_lite_armhf-2024-11-19/2024-11-19-raspios-bookworm-armhf-lite.img.xz).
+3. Insert the Micro SD card you want to format and open the Raspberry Pi Imager. Note that everything on the SD card will be deleted, so make sure that you're alright with that.
 4. Ignore the first box and click the second box labeled `Choose OS`
 5. Scroll all the way down to `Use custom` and click that
 6. Select the file you downloaded from step 2
@@ -24,15 +20,15 @@ Alrighty then, let's start getting your piTVstation setup and ready for use!
 8. Click `Next`
 9. A box should pop up, click the box labeled `Edit Settings`
 10. Go ahead and set your `hostname` to whatever you desire (if using multiple Raspberry Pis, have them be different names), set your `username and password`, and set your `wireless LAN` so we can add videos to the Pi
-11. At the top you should a tab called `Services`, click that and `enable SSH` then select `Use password authentication`
-12. Next, At the top again, click `options` then make sure `Eject media when finished` is **unchecked** and go ahead and uncheck `Enable telemetry` if you want.
-12. Lastly, at the bottom click `Save` and click the box that says `Yes`, then `Yes` one more time. It shouldn't take too long, but when it's done, ignore the message saying that it's ok to remove. Yay! Part 1 is done!
+11. If you are going to use a USB keyboard to finish setting up the Pi, then skip this step. Else, at the top you should see a tab called `Services`, click that and `enable SSH` then select `Use password authentication`.
+12. Next, at the top again, click `options` then make sure `Eject media when finished` is **unchecked** and go ahead and uncheck `Enable telemetry` if you want.
+13. Lastly, at the bottom click `Save` and click the box that says `Yes`, then `Yes` one more time. It shouldn't take too long, but when it's done, ignore the message saying that it's ok to remove. Yay! Part 1 is done!
 
-### Configuring the SD card for first boot
+### Configuring The SD Card For First Boot - Part 2
 
-#### Composite Cable
+#### Using Composite
 
-Before we insert the Micro SD card into the Raspberry Pi 4, we have do a few things so that it works on older TVs using RCA composite cables.
+Before we insert the Micro SD card into the Raspberry Pi 4, we have do a few things so that it works on older TVs using an RCA composite cable.
 
 + Mac - *On the Desktop, you should see an image of a SD card called `bootfs` click that*
 + PC - *Go to your File Explorer and you should see a drive called `bootfs` click that*
@@ -46,73 +42,41 @@ Before we insert the Micro SD card into the Raspberry Pi 4, we have do a few thi
 5. It should look something like this: `rootwait video=Composite-1:720x480@60ie quiet`. You want it in between `rootwait` and `quiet`
 6. Now we can insert the Micro SD card into the Raspberry Pi! Part 2 is done!
 
-### Setting up the operating system
+#### Using HDMI
 
-1. Go ahead and power on the Pi with the SD card inserted. It will show a black screen for awhile, but eventually you'll see a prompt to login
+**STILL NEED TO TEST**
+
+### Setting Up The Operating System - Part 3
+
+1. Go ahead and power on the Pi with the SD card inserted. It will show a black screen for awhile, but eventually you'll see a prompt to login. It might restart again when your see the login screen, just wait bit to be sure.
 
 *You can use a USB keyboard to continue following the steps below, but I recommend remotely logging in with your computer using SSH if you know how to do that since it might be a little hard to see using composite cables*
 
 + *Mac - On the top right click the magnifying glass and type `Terminal` and hit the Enter Key. Then `ssh YOUR_USER_NAME@PI_IP_ADDRESS`, you can see your Pi's IP Address on the TV screen. For example mine would be `ssh jonathan@192.168.0.6`*
 
-2. If you haven't already, go ahead and login.
-3. Now that we're in the Pi, let's get a few programs that are needed and have piTVstation installed.
-4. Type `mkdir -p ~/piTVstation/{scripts,videos,commercials,backups}`
-5. Type `sudo apt update`
-6. Now lets download `vlc` and `mediainfo`. Type `sudo apt install vlc mediainfo` and hit enter. That will download two programs that are currently needed to get the piTVstation running.
-7. Once that's done, we need to get the piTVstation script.
-8. This command is pretty long, but please type `wget -P ~/piTVstation/scripts https://github.com/JonVega/piTVstation/archive/refs/tags/v.25.2.0.zip`
-9. Then type `unzip -j ~/piTVstation/scripts/v.25.2.0.zip -d ~/piTVstation/scripts/`
-10. Then lastly, type `sudo chmod 755 ~/piTVstation/scripts/{createStopmarks.sh,piTVstation.sh}`
-11. We now have the scripts needed to run piTVstation, so next let's add videos to the Pi! Part 3 is done!
+2. If you haven't already, go ahead and login using your keyboard or through SSH.
+3. Now that we're in the Pi, just run this command to begin the installation process: 'curl -sL https://github.com/JonVega/piTVstation/releases/download/v.25.3.0/install.sh | bash'
+4. Once installation is completed, the Pi will restart and you will be greeted with a test pattern. That's our cue to start adding videos to piTVstation. Part 3 is done!
 
-### Adding videos
+### Adding Videos - Part 4
 
-1. Videos are added to the folder called `videos` in the `piTVstation` folder. You can use the `scp` command to transfer them to your Pi or an application like WinSCP on Windows or Fetch on Mac.
-2. If you like using the terminal then type something like this to transfer a directory of videos `scp VIDEO.mp4 PI_USERNAME@PI_IP_ADDRESS:~/piTVstation/videos`. Mine would be like `scp ~/Downloads/videos/* jonathan@192.168.0.6:~/piTVstation/videos`, this example transfers all my video files from a folder called `videos` in my `Downloads` folder on my Mac to the piTVstation's video folder.
+1. piTVstation should now be available in the Network section on Mac and Windows.
+2. Go ahead and connect to your piTVstation using your Pi's user name for both the User Name and Password.
+3. Navigate to the `piTVstation --> videos` folder and begin copying your videos in this folder. **Note: You cannot add folders in the `video` folder, just only video files should be here!**
 
-### Adding commercials
+**If you do not want to have commercials playing, then you are done! Go ahead and eject, on macOS at least, piTVstation from the network. A random video should now be playing, and whenever you want to add more videos, go ahead and connect to the piTVstation and drop some more videos. When an episode is finished, it will automatically add your new videos for random playback. Have Fun!**
 
-1. Adding commercials is just like adding videos, but instead of `~/piTVstation/videos` it's `~/piTVstation/commercials`. An example would be `scp ~/Downloads/commercials/* jonathan@192.168.0.6:~/piTVstation/commercials`, this example transfers all my commercial video files from a folder called `commercials` in my `Downloads` folder on my Mac to the piTVstation's commercial folder.
+### Adding Commercials - Part 5
 
-### Configuring piTVstation
+1. Adding commercials is just like adding videos
+2. Navigate to the `piTVstation --> commercials` folder and begin copying your commercials in that folder. **Note: You cannot add folders in the `commercial` folder, just only video files should be here!**
+3. Once you've added your commercials, you can now, on macOS at least, eject the piTVstation
 
-1. Let's set the Pi to automatically start the piTVstation when powered on, go ahead and type this `sudo nano /etc/systemd/system/piTVstation.service`
-2. Then paste this (or type it out if using a keyboard):
+#### What now?
 
-```text
-[Unit]
-Description=Runs piTVStation script forever
-After=multi-user.target
+So... commercials. 
 
-[Service]
-Type=simple
-Restart=on-failure
-User=jonathan
-ExecStart=/home/jonathan/piTVstation/scripts/piTVstation.sh
-
-[Install]
-WantedBy=multi-user.target
-```
-
-3. Now where it says `User=jonathan`, replace `jonathan` with your Pi's username
-4. And where it says `ExecStart=/home/jonathan/piTVstation/scripts/piTVstation.sh`, change the `jonathan` part to your Pi's username
-5. Press `Control + O`, then hit the Enter key, then `Control + X` to quit
-6. Then back at the terminal, type `sudo chmod 644 /etc/systemd/system/piTVstation.service`
-7. Then type `sudo systemctl daemon-reload`
-8. Then `sudo systemctl enable piTVstation.service`
-9. We're almost done! next type `nano ~/piTVstation/scripts/piTVstation.sh` and hit Enter
-10. There are only two things you may want to change, once done with below, hit `Control + O` to save and `Control + X` to exit
-
-+ `AMOUNT_COMMERCIALS=0` - How many commercials should play before resuming playback
-+ `AUDIO_MODE="--stereo-mode=0"` - 0 for mono, 1 for stereo, 2 for reverse stereo
-
-10. Lastly, let's restart the Pi by typing `sudo shutdown -r now`
-
-### What now?
-
-If you decided to opt-out of using commercials, then you're done! Yay! Just add videos to your Pi and reboot (either by using `ssh` and logging back into the Pi and using the command `sudo shutdown -r now` or by unplugging and replugging the power cable (**not recommended**).
-
-So... commercials, if you would like them to play after each episode then adjust the variable above `AMOUNT_COMMERCIALS=0` to as many as you like.
+By default, the piTVstation plays 3 commercials, but this can be changed. Navigate to the `scripts` folder in the `piTVstation` folder and open the file `piTVstation.sh` using a text editor. Where it says `amount_commercials=3`, change the number to as many commercials you would like and save and quit your text editor.
 
 **But what about during playback?** You know, when an episode fades to black for a commercial break. Then you'll have to add stopmarks yourself manually. Tedious, I know, but it does help with videos that have commercials already in them or episodes that lack commercials. By adding stopmarks manually, we can ignore those commercials and resume playback or add commercials in ourselves.
 
@@ -137,22 +101,19 @@ That's the **stopmark in seconds**. You can go ahead and alter it like so:
 1360
 ```
 
-Now when an episode reaches that mark, it will play `X` amount of commercials then resume playback. If you have the stopmarks set and later decide you're not feeling the commercials, go ahead and set `AMOUNT_COMMERCIALS` back to zero (`nano ~/piTVstation/scripts/piTVstation.sh`). You can always come change it later.
+Now when an episode reaches that mark, it will play `X` amount of commercials then resume playback. If you have the stopmarks set and later decide you're not feeling the commercials, go ahead and set `amount_commercials`, see above, to zero. You can always come change it later.
 
 Once you have taken the time to add a bunch of stopmarks for your videos, just restart the Pi and a backup will automatically be created in the `backups` folder as a zip file.
 
-## Considerations down the line
+## Some Considerations Down The Line
 
-+ When videos are added, reflect changes immediately without rebooting
-+ SAMBA server on boot to add videos wirelessly, versus using SFTP to transfer files
 + Using a USB device to watch videos from instead of just a Micro SD card
 + Import videos using USB instead of WiFi
-+ Making a pre-configured image to make installation a breeze, or just making the setup process much faster and easier
-+ Have it play selected Holiday videos during a given timeframe (I'll call it *The Scheduler*)
++ Have it play selected Holiday videos during a given timeframe (I'll call this feature *The Scheduler*)
 + Change the currently playing video using a remote control or a button using GPIO
 + Is it possible to swap directories to simulate channels using just one Raspberry Pi?
 
-## Random tidbits
+## Random Tidbits
 
 + You could use a bunch of Pis running piTVstation to simulate channels. For example, one Pi could be *90's animation* and another could be *1950's TV*, then use a device like the ChannelPlus 3025 to map each Pi to a selected channel on your TV.
 + `vlc` is used because it supports hardware acceleration versus other video players that use software. Raspberry Pi 4 has hardware acceleration for H264 and H265 (HEVC).
