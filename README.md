@@ -1,6 +1,6 @@
 # piTVstation
 
-Relive the era of television before video streaming! Turn your Raspberry Pi 4, that uses a composite cable, into a retro tv station that plays random episodes forever using VLC. Commercials can also be added during commercial breaks or just after an episode finishes.
+Relive the era of television before video streaming! Turn your Raspberry Pi 4, using a composite cable, into a retro tv station that plays random episodes forever using VLC. Commercials can also be added during commercial breaks or just after an episode finishes.
 
 So far, I only tested this with a Raspberry Pi 4 using a composite cable, but I'll give an update on other models and computers.
 
