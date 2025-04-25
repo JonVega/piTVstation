@@ -55,7 +55,7 @@ Before we insert the Micro SD card into the Raspberry Pi 4, we have do a few thi
 + *Mac - On the top right click the magnifying glass and type `Terminal` and hit the Enter Key. Then `ssh YOUR_USER_NAME@PI_IP_ADDRESS`, you can see your Pi's IP Address on the TV screen. For example mine would be `ssh jonathan@192.168.0.6`*
 
 2. If you haven't already, go ahead and login using your keyboard or through SSH.
-3. Now that we're in the Pi, just run this command to begin the installation process: 'curl -sL https://github.com/JonVega/piTVstation/releases/download/v.25.3.0/install.sh | bash'
+3. Now that we're in the Pi, just run this command to begin the installation process: `curl -sL https://github.com/JonVega/piTVstation/releases/download/v.25.3.0/install.sh | bash`
 4. Once installation is completed, the Pi will restart and you will be greeted with a test pattern. That's our cue to start adding videos to piTVstation. Part 3 is done!
 
 ### Adding Videos - Part 4
